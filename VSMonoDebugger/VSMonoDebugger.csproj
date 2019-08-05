@@ -55,6 +55,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Mono.Debugging.VisualStudio\SuspendDebuggerSession.cs" />
     <Compile Include="Mono.Debugging.VisualStudio\XamarinEngine.cs" />
     <Compile Include="Mono.Debugging.VisualStudio\XamarinPortSupplier.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

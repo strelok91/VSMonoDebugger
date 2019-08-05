@@ -17,7 +17,7 @@ namespace Mono.Debugging.VisualStudio
     {
         protected Engine _engine;
 
-        protected SoftDebuggerSession _session;
+        protected SuspendDebuggerSession _session;
         protected StartInfo _startInfo;
 
         public static Project StartupProject { set; get; }
@@ -34,7 +34,7 @@ namespace Mono.Debugging.VisualStudio
                 NLogService.TraceEnteringMethod();
                 var debugOptions = DebugOptions.DeserializeFromJson(jsonDebugOptions);
 
-                _session = new SoftDebuggerSession();
+                _session = new SuspendDebuggerSession();
                 _session.TargetReady += (sender, eventArgs) =>
                 {
                     Debug.WriteLine("TargetReady!");
