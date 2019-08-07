@@ -20,6 +20,7 @@ namespace VSMonoDebugger.Settings
         private int _sSHDebugConnectionTimeout;
         private string _sSHPrivateKeyFile;
         private bool _useDeployPathFromProjectFileIfExists;
+        private string _loadConfigFromFileName;
 
         public UserSettings()
         {
@@ -59,6 +60,8 @@ namespace VSMonoDebugger.Settings
 
         private RedirectOutputOptions _redirectOutputOption;
         public RedirectOutputOptions RedirectOutputOption { get => _redirectOutputOption; set { _redirectOutputOption = value; NotifyPropertyChanged(); } }
+
+        public string LoadConfigFromFileName { get => _loadConfigFromFileName; set { _loadConfigFromFileName = value; NotifyPropertyChanged(); } }
 
         public string SSHFullUrl
         {

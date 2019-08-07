@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using VSMonoDebugger.Views;
 
@@ -64,11 +65,69 @@ namespace VSMonoDebugger.Settings
             return json;
         }
 
-        public static UserSettingsContainer DeserializeFromJson(string json)
+        public static UserSettingsContainer DeserializeFromJson(string json, string appDirectoryPath)
         {
             var result = JsonConvert.DeserializeObject<UserSettingsContainer>(json) ?? new UserSettingsContainer();
+
+            CheckConfigurationsFromFiles(result, appDirectoryPath);
+
             Validate(result);
+
             return result;
+        }
+
+        private static void CheckConfigurationsFromFiles(UserSettingsContainer container, string appDirectoryPath)
+        {
+            if (container != null)
+            {
+                for (int i = 0; i < container.DeviceConnections.Count; i++)
+                {
+                    var settings = container.DeviceConnections[i];
+
+                    var filePath = Path.Combine(appDirectoryPath, settings.LoadConfigFromFileName);
+                    var loadedSettings = GetConfigFromFile(filePath);
+
+                    if (loadedSettings != null)
+                    {
+                        container.DeviceConnections[i] = loadedSettings;
+                    }
+                }
+            }
+
+            if (!string.IsNullOrEmpty(container.CurrentUserSettings.LoadConfigFromFileName))
+            {
+                var filePath = Path.Combine(appDirectoryPath, container.CurrentUserSettings.LoadConfigFromFileName);
+                var loadedSettings = GetConfigFromFile(filePath);
+
+                if (loadedSettings != null)
+                {
+                    container._currentUserSettings = loadedSettings;
+                }
+            }
+        }
+
+        private static UserSettings GetConfigFromFile(string path)
+        {
+            if (!string.IsNullOrEmpty(path))
+            {
+                try
+                {
+                    var json = File.ReadAllText(path);
+
+                    var settings = JsonConvert.DeserializeObject<UserSettings>(json);
+                    settings.LoadConfigFromFileName = Path.GetFileName(path);
+
+                    return settings;
+                }
+                catch
+                {
+                    // Failed to load config from specific file
+
+                    return null;
+                }
+            }
+
+            return null;
         }
 
         private static void Validate(UserSettingsContainer instance)

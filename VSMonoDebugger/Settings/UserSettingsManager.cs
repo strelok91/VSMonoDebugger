@@ -23,7 +23,7 @@ namespace VSMonoDebugger.Settings
             get { return manager; }
         }
 
-        public UserSettingsContainer Load()
+        public UserSettingsContainer Load(string appDirectoryPath)
         {
             var result = new UserSettingsContainer();
 
@@ -32,7 +32,7 @@ namespace VSMonoDebugger.Settings
                 try
                 {
                     string content = store.GetString(SETTINGS_STORE_NAME, "Settings");
-                    result = UserSettingsContainer.DeserializeFromJson(content);
+                    result = UserSettingsContainer.DeserializeFromJson(content, appDirectoryPath);
                     return result;
                 }
                 catch (Exception ex)

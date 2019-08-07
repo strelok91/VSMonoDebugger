@@ -76,6 +76,7 @@
       <DependentUpon>DebugSettings.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\DebugSettings.cs" />
+    <Compile Include="Views\EmptyStringConverter.cs" />
     <Compile Include="VSMonoDebuggerCommands.cs" />
     <Compile Include="VSMonoDebuggerPackage.cs" />
   </ItemGroup>

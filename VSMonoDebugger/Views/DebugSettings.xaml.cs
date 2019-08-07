@@ -13,13 +13,13 @@ namespace VSMonoDebugger.Views
     {
         private IVsUIShell _vsUIShell;
 
-        public DebugSettings(IVsUIShell vsUIShell)
+        public DebugSettings(IVsUIShell vsUIShell, string appDirectoryPath)
         {
             _vsUIShell = vsUIShell;
             InitializeComponent();
             WindowStartupLocation = WindowStartupLocation.CenterOwner;
 
-            ViewModel = new DebugSettingsModel();
+            ViewModel = new DebugSettingsModel(appDirectoryPath);
             DataContext = ViewModel;
             //Closing += (o, e) => ViewModel.SaveDebugSettings();
         }
@@ -93,7 +93,7 @@ namespace VSMonoDebugger.Views
                 ViewModel.SettingsContainer.CurrentUserSettings.DebugScriptWithParameters = "";
             }
         }
-        
+
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -110,7 +110,7 @@ namespace VSMonoDebugger.Views
                     if (File.Exists(currentFilename))
                     {
                         openFileDialog.FileName = Path.GetFileName(currentFilename);
-                    }                    
+                    }
                 }
                 catch
                 {

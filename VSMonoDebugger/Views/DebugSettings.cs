@@ -9,10 +9,10 @@ namespace VSMonoDebugger.Views
     {
         private UserSettingsContainer _settingsContainer;
 
-        public DebugSettingsModel()
+        public DebugSettingsModel(string appDirectoryPath)
         {
             _allRedirectOutputOptions = new ObservableCollection<RedirectOutputOptions>(Enum.GetValues(typeof(RedirectOutputOptions)).Cast<RedirectOutputOptions>());
-            _settingsContainer = UserSettingsManager.Instance.Load();
+            _settingsContainer = UserSettingsManager.Instance.Load(appDirectoryPath);
         }
 
         public void SaveDebugSettings()

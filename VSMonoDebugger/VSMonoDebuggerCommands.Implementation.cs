@@ -89,7 +89,9 @@ namespace VSMonoDebugger
 
         private async void BuildProjectWithMDBFilesClicked(object sender, EventArgs e)
         {
-            await BuildProjectWithMDBFilesAsync();
+            var appDiretoryPath = Path.GetDirectoryName(_monoExtension.GetStartupAssemblyPath());
+
+            await BuildProjectWithMDBFilesAsync(appDiretoryPath);
         }
 
         private void OpenSSHDebugConfigDlg(object sender, EventArgs e)
@@ -100,7 +102,8 @@ namespace VSMonoDebugger
             var vsUIShell = ServiceProvider.GetService(typeof(SVsUIShell)) as IVsUIShell;
             Assumes.Present(vsUIShell);
 
-            var dlg = new DebugSettings(vsUIShell);
+            var appDiretoryPath = Path.GetDirectoryName(_monoExtension.GetStartupAssemblyPath());
+            var dlg = new DebugSettings(vsUIShell, appDiretoryPath);
             vsUIShell.GetDialogOwnerHwnd(out IntPtr vsParentHwnd);
             vsUIShell.EnableModeless(0);
             try
@@ -141,7 +144,8 @@ namespace VSMonoDebugger
                 UserSettings settings;
                 DebugOptions debugOptions;
                 SshDeltaCopy.Options options;
-                CreateDebugOptions(out settings, out debugOptions, out options);
+                var appDiretoryPath = Path.GetDirectoryName(_monoExtension.GetStartupAssemblyPath());
+                CreateDebugOptions(appDiretoryPath, out settings, out debugOptions, out options);
 
                 if (debuggerMode.HasFlag(DebuggerMode.DeployOverSSH))
                 {
@@ -183,11 +187,11 @@ namespace VSMonoDebugger
             return false;
         }
 
-        private static void CreateDebugOptions(out UserSettings settings, out DebugOptions debugOptions, out SshDeltaCopy.Options options)
+        private static void CreateDebugOptions(string appDirectoryPath, out UserSettings settings, out DebugOptions debugOptions, out SshDeltaCopy.Options options)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var allDeviceSettings = UserSettingsManager.Instance.Load();
+            var allDeviceSettings = UserSettingsManager.Instance.Load(appDirectoryPath);
             settings = allDeviceSettings.CurrentUserSettings;
 
             if (settings.UseDeployPathFromProjectFileIfExists)
@@ -226,7 +230,7 @@ namespace VSMonoDebugger
             };
         }
 
-        private async Task<bool> BuildProjectWithMDBFilesAsync()
+        private async Task<bool> BuildProjectWithMDBFilesAsync(string appDirectoryPath)
         {
             try
             {
@@ -241,7 +245,7 @@ namespace VSMonoDebugger
                 UserSettings settings;
                 DebugOptions debugOptions;
                 SshDeltaCopy.Options options;
-                CreateDebugOptions(out settings, out debugOptions, out options);
+                CreateDebugOptions(appDirectoryPath, out settings, out debugOptions, out options);
 
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
                 await _monoExtension.BuildStartupProjectAsync();
